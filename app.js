@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-
+const PORT = process.env.PORT || 3000
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -131,6 +131,6 @@ app.route("/sarcasm/:sno")
     );
 });
 
-app.listen(3000,()=>{
+app.listen(PORT,()=>{
     console.log("Listening at port 3000");
 });
