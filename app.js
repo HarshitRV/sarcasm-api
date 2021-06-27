@@ -33,19 +33,19 @@ app.route("/sarcasm")
         }
     });
 })
-// .post((req,res)=>{
-//     const sarcasticComment = new Sarcasm({
-//         sno: req.body.sno,
-//         sarcasm: req.body.sarcasm
-//     });
-//     sarcasticComment.save((err)=>{
-//         if(!err){
-//             res.send("Succesfully saved new sarcastic comment");
-//         }else{
-//             res.send(err);
-//         }
-//     });
-// })
+.post((req,res)=>{
+    const sarcasticComment = new Sarcasm({
+        sno: req.body.sno,
+        sarcasm: req.body.sarcasm
+    });
+    sarcasticComment.save((err)=>{
+        if(!err){
+            res.send("Succesfully saved new sarcastic comment");
+        }else{
+            res.send(err);
+        }
+    });
+})
 // .delete((req,res)=>{
 //     Sarcasm.deleteMany({}, (err)=>{
 //         if(!err){
