@@ -33,19 +33,19 @@ app.route("/sarcasm")
         }
     });
 })
-.post((req,res)=>{
-    const sarcasticComment = new Sarcasm({
-        sno: req.body.sno,
-        sarcasm: req.body.sarcasm
-    });
-    sarcasticComment.save((err)=>{
-        if(!err){
-            res.send("Succesfully saved new sarcastic comment");
-        }else{
-            res.send(err);
-        }
-    });
-})
+// .post((req,res)=>{
+//     const sarcasticComment = new Sarcasm({
+//         sno: req.body.sno,
+//         sarcasm: req.body.sarcasm
+//     });
+//     sarcasticComment.save((err)=>{
+//         if(!err){
+//             res.send("Succesfully saved new sarcastic comment");
+//         }else{
+//             res.send(err);
+//         }
+//     });
+// })
 // .delete((req,res)=>{
 //     Sarcasm.deleteMany({}, (err)=>{
 //         if(!err){
@@ -70,48 +70,48 @@ app.route("/sarcasm/:sno")
         }
     })
 })
-.put((req,res)=>{
-    Sarcasm.findOneAndUpdate(
-        {
-            sno: Number(req.params.sno)
-        },
-        {
-            sno: req.body.sno,
-            sarcasm: req.body.sarcasm
-        },
-        {
-            overwrite: true
-        },
-        (err)=>{
-            if(!err){
-                res.send("Successfully Updated");
-            }else{
-                res.send(err);
-            }
-        }
-    );
-})
-.patch((req,res)=>{
-    Sarcasm.findOneAndUpdate(
-        {
-            sno: Number(req.params.sno)
-        },
-        {
-            $set: req.body
-        },
-        (err,foundComment)=>{
-            if(!err){
-                if(foundComment){
-                    res.send(`Patched ${req.body.sno}`);
-                }else{
-                    res.send("No such item found to be patched");
-                }   
-            }else{
-                res.send(err);
-            }
-        }
-    )
-})
+// .put((req,res)=>{
+//     Sarcasm.findOneAndUpdate(
+//         {
+//             sno: Number(req.params.sno)
+//         },
+//         {
+//             sno: req.body.sno,
+//             sarcasm: req.body.sarcasm
+//         },
+//         {
+//             overwrite: true
+//         },
+//         (err)=>{
+//             if(!err){
+//                 res.send("Successfully Updated");
+//             }else{
+//                 res.send(err);
+//             }
+//         }
+//     );
+// })
+// .patch((req,res)=>{
+//     Sarcasm.findOneAndUpdate(
+//         {
+//             sno: Number(req.params.sno)
+//         },
+//         {
+//             $set: req.body
+//         },
+//         (err,foundComment)=>{
+//             if(!err){
+//                 if(foundComment){
+//                     res.send(`Patched ${req.params.sno}`);
+//                 }else{
+//                     res.send("No such item found to be patched");
+//                 }   
+//             }else{
+//                 res.send(err);
+//             }
+//         }
+//     )
+// })
 // .delete((req,res)=>{
 //     Sarcasm.findOneAndRemove(
 //         {
