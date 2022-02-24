@@ -18,7 +18,6 @@ const onlineDB = process.env.MONGO_CONNECTION;
 mongoose.connect(onlineDB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
 });
 
 const sarcasmSchema = new mongoose.Schema({
