@@ -1,7 +1,7 @@
 # js files
 test.js
 test
-
+.DS_Store
 # Logs
 logs
 *.log
