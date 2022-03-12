@@ -19,8 +19,10 @@ export const register = catchAsync(async (req, res) => {
         firstName,
         lastName,
         password,
-        role
     } = req.body;
+
+    let { role } = req.body;
+    
     if (!role) {
         role = "ROLE_MEMBER"
     }
