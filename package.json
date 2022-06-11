@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "devstart": "env-cmd -f ./resources/configs/dev.env nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -27,5 +28,8 @@
     "mongoose": "^6.2.5",
     "morgan": "^1.10.0",
     "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0"
   }
 }

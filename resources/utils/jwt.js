@@ -1,7 +1,4 @@
 import jwt from "jsonwebtoken";
-import {
-    SECRETS
-} from "../configs/config.js";
 
 /**
  * This function create a JWT Token based on user._id, secret key and expiration time
@@ -12,8 +9,8 @@ import {
 export const newToken = (user) => {
     return jwt.sign({
         id: user._id
-    }, SECRETS.JWT_SECRET, {
-        expiresIn: SECRETS.JWT_EXP,
+    }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXP,
     });
 };
 
@@ -26,7 +23,7 @@ export const newToken = (user) => {
  */
 export const verifyToken = (token) =>
     new Promise((resolve, reject) => {
-        jwt.verify(token, SECRETS.JWT_SECRET, (err, payload) => {
+        jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
             if (err) return reject(err);
             resolve(payload);
         });

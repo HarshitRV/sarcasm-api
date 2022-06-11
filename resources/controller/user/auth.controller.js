@@ -1,7 +1,4 @@
 import {
-    SECRETS
-} from "../../configs/config";
-import {
     User
 } from "../../models/user.model.js";
 
@@ -36,7 +33,7 @@ export const register = wrapAsync(async (req, res) => {
      * If registering as admin, check if pass_code is correct
      */
     if (role === 'ROLE_ADMIN') {
-        if (pass_code !== SECRETS.PASS_CODE) {
+        if (pass_code !== process.env.PASS_CODE) {
             throw new CustomError(401, "Invalid pass_code, you are not authorized to register as admin");
         }
     }
