@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "devstart": "env-cmd -f ./configs/dev.env nodemon server.js"
+    "devstart": "env-cmd -f ./configs/dev.env nodemon server.js",
+    "prodstart": "env-cmd -f ./configs/prod.env node server.js"
   },
   "repository": {
     "type": "git",
