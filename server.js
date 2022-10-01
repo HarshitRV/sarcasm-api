@@ -41,6 +41,14 @@ app.use(morgan("dev"));
 app.use('/', SarcasmRouter);
 app.use('/user', UserRouter);
 
+// Status check route
+app.route("/status").get((req, res)=>{
+    return res.status(200).json({
+        "status": 200,
+        "msg": "Server running"
+    })
+})
+
 /**
  * Default Error Handling Middleware
  */
