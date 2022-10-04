@@ -70,10 +70,11 @@ const start = async () => {
         connect();
 
         app.listen(PORT, () => {
-            console.log(`REST API on http://localhost:${PORT}/`);
+            console.log(`REST API running on ${PORT}`);
         });
     } catch (err) {
-        console.error(err, "This is the error in starting the server");
+        console.log("Error starting the server");
+        console.error(err);
     }
 };
 start();
