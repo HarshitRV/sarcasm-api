@@ -10,7 +10,7 @@ const SarcasmSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    comment: {
+    sarcasm: {
         type: String,
         required: true,
         unique: true,
