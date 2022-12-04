@@ -47,7 +47,7 @@ export const addNewComment = catchAsync(async (req, res)=>{
 
     const addNewComment = new Sarcasm({
         sno,
-        comment,
+        sarcasm: comment,
         added_by: _user._id
     });
     // _user.comments_added.push(addNewComment._id);
@@ -100,7 +100,7 @@ export const putOneComment = catchAsync(async (req, res)=> {
         sno
     },{
         sno,
-        comment
+        sarcasm: comment // Might be a bug 🤷‍♂️
     },
     {
         overwrite: true
