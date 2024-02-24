@@ -2,12 +2,10 @@ import catchAsync from "../../utils/catchAsync.js";
 import { ServerError } from "../../utils/ServerError.js";
 
 /**
- * 
- * This funciton will find all the users and send them in response object
+ * Find all the users and send them in response object
  * 
  * @param {Object} req object 
  * @param {Object} res array of objects of user data
- * 
  * 
  */
 export const getAllUsers = catchAsync(async(req,res) =>{
@@ -18,7 +16,7 @@ export const getAllUsers = catchAsync(async(req,res) =>{
         .skip(startIndex)
         .select("-password")
         .exec();
-    if (!users) throw new ServerError(500, "Users not found")
-    res.status(200).send({status : "success" , data : users})
+    if (!users) throw new ServerError(404, "Users not found")
+    res.status(200).send({success :true , data : users})
 
 })

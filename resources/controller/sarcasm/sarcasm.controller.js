@@ -59,7 +59,7 @@ export const addNewComment = catchAsync(async (req, res)=>{
     await addNewComment.save();
 
     res.status(200).send({
-        status: "ok",
+        success: true,
         msg: "Successfully added the new sarcastic comment",
         added_by: user.name,
     })

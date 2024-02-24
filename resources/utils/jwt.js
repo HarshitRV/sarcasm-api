@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 /**
- * This function create a JWT Token based on user._id, secret key and expiration time
+ * Creates a JWT Token based on user._id, secret key and expiration time
  * 
  * @param {object} user 
  * @returns {string} JWT Token  
@@ -15,7 +15,7 @@ export const newToken = (user) => {
 };
 
 /**
- * This function varifies JWT token and give out id of the user it belongs to.
+ * Verifies JWT token and give out id of the user it belongs to.
  * We can further use the id to find the user and authenticate accordingly.
  * 
  * @param {string} JWT token 

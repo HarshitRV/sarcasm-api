@@ -1,6 +1,4 @@
-import {
-    Router
-} from "express";
+import { Router } from "express";
 
 /**
  * Middleware
@@ -13,12 +11,12 @@ import { role } from "../../middlewares/role.js";
  * Import Contoller functions
  */
 import {
-    getAllComments,
-    getRandomComment,
-    addNewComment,
-    patchOneComment,
-    putOneComment,
-    deleteOneComment
+	getAllComments,
+	getRandomComment,
+	addNewComment,
+	patchOneComment,
+	putOneComment,
+	deleteOneComment,
 } from "../../controller/sarcasm/sarcasm.controller.js";
 
 const SarcasmRouter = Router();
@@ -26,37 +24,27 @@ const SarcasmRouter = Router();
 /**
  * Get one random comment
  */
-SarcasmRouter.route('/')
-    .get(getRandomComment);
+SarcasmRouter.route("/").get(getRandomComment);
+/**
+ * Patch one comment
+ */
+SarcasmRouter.route("/sarcasm")
+	.patch(protect, role.checkRole(role.ROLES.Admin), patchOneComment)
+	.put(protect, role.checkRole(role.ROLES.Admin), putOneComment)
+	.delete(protect, role.checkRole(role.ROLES.Admin), deleteOneComment);
 
 /**
  * Get all comments
  */
-SarcasmRouter.route('/all')
-    .get(getAllComments);
+SarcasmRouter.route("/sarcasm/all").get(getAllComments);
 
 /**
  * Add new comment
  */
-SarcasmRouter.route('/add')
-    .post(protect,role.checkRole(role.ROLES.Admin),addNewComment);
-
-/**
- * Patch one comment
- */
-SarcasmRouter.route('/patch_one')
-    .patch(protect,role.checkRole(role.ROLES.Admin),patchOneComment);
-
-/**
- * Put one comment
- */
-SarcasmRouter.route('/put_one')
-    .put(protect,role.checkRole(role.ROLES.Admin),putOneComment);
-
-/**
- * Delete one comment
- */
-SarcasmRouter.route('/delete_one')
-    .delete(protect,role.checkRole(role.ROLES.Admin),deleteOneComment);
+SarcasmRouter.route("/sarcasm/add").post(
+	protect,
+	role.checkRole(role.ROLES.Admin),
+	addNewComment
+);
 
 export default SarcasmRouter;
