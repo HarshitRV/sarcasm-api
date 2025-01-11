@@ -6,7 +6,7 @@ import { attachDatabase } from "../../middlewares/utils.ts/middlewares.utils.js"
 const sarcasmController = new SarcasmController();
 const sarcasmRouter = Router();
 
-sarcasmRouter.route<SarcasmRoute>('/').get(...attachDatabase(sarcasmController.getAllSarcasm));
+sarcasmRouter.route<SarcasmRoute>('/').get(...attachDatabase(sarcasmController.getRandomSarcasm));
 sarcasmRouter.route<SarcasmRoute>('/sarcasm/all').get(...attachDatabase(sarcasmController.getAllSarcasm));
 sarcasmRouter.route<SarcasmRoute>('/sarcasm/random').get(...attachDatabase(sarcasmController.getRandomSarcasm));
 
