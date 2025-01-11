@@ -19,6 +19,7 @@ app.use(
 app.use(cors());
 app.use(morgan('dev'));
 
+app.use(sarcasmRouter);
 app.use(APP_ROUTE.V1, authRouter);
 app.use(APP_ROUTE.V1, sarcasmRouter);
 app.use(APP_ROUTE.V1, userRouter);
