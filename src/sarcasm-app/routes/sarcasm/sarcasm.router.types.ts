@@ -1,6 +1,7 @@
 import { ObjectValues } from "../../utils/type.utils.js";
 
 export const SARCASM_ROUTE = {
+    ALL: "/",
     GET_ALL: "/sarcasm/all",
     GET_RANDOM: "/sarcasm/random"
 } as const;
