@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 export interface AddSarcasmRequestBody {
     sarcasm: string;
@@ -14,5 +14,5 @@ export interface AddSarcasmErrorResponse {
 }
 
 export const addSarcasmSchema = Joi.object({
-    sarcasm: Joi.string().required()
+    sarcasm: Joi.string().required(),
 });

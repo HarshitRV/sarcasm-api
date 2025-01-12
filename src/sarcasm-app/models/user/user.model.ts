@@ -1,38 +1,43 @@
-import mongoose, { Schema, SchemaOptions } from "mongoose";
-import { ROLES, IUser, USER_MODEL } from "./user.model.types.js";
+import mongoose, { Schema, SchemaOptions } from 'mongoose';
+import { ROLES, IUser, USER_MODEL } from './user.model.types.js';
 import bcrypt from 'bcryptjs';
-import { SARCASM_MODEL } from "../sarcasm/sarcasm.model.types.js";
+import { SARCASM_MODEL } from '../sarcasm/sarcasm.model.types.js';
 
-const userSchemaOptions: SchemaOptions = { toJSON: { virtuals: true }, timestamps: true };
+const userSchemaOptions: SchemaOptions = {
+    toJSON: { virtuals: true },
+    timestamps: true,
+};
 
-const userSchema: Schema<IUser> = new Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        lowercase: true
+const userSchema: Schema<IUser> = new Schema(
+    {
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true,
+            lowercase: true,
+        },
+        password: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        verified: {
+            type: Boolean,
+            default: false,
+        },
+        role: {
+            type: String,
+            default: ROLES.USER,
+            enum: [...Object.values(ROLES)],
+        },
+        otp: {
+            type: String,
+            trim: true,
+        },
     },
-    password: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    verified: {
-        type: Boolean,
-        default: false
-    },
-    role: {
-        type: String,
-        default: ROLES.USER,
-        enum: [...Object.values(ROLES)],
-    },
-    otp: {
-        type: String,
-        trim: true
-    },
-}, userSchemaOptions);
-
+    userSchemaOptions,
+);
 
 /**
  * Before saving hash and salt the password if it has been modified.
@@ -58,12 +63,12 @@ userSchema.pre<IUser>('save', async function (next) {
 /**  Compare the hashed password with the password provided */
 userSchema.methods.checkPassword = function (password: string): boolean {
     return bcrypt.compareSync(password, this.password);
-}
+};
 
 /** Compare the hashed otp with the otp provided */
 userSchema.methods.checkOTP = function (otp: string): boolean {
     return bcrypt.compareSync(otp, this.otp);
-}
+};
 
 userSchema.virtual('added_comments', {
     ref: SARCASM_MODEL,

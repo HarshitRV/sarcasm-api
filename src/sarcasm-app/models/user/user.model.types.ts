@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 export const ROLES = {
     USER: 'ROLE_USER',
-    ADMIN: 'ROLE_ADMIN'
+    ADMIN: 'ROLE_ADMIN',
 } as const;
 
-export type Roles = typeof ROLES[keyof typeof ROLES];
+export type Roles = (typeof ROLES)[keyof typeof ROLES];
 
 export interface IUser extends mongoose.Document {
     email: string;
@@ -19,4 +19,4 @@ export interface IUser extends mongoose.Document {
     added_comments?: mongoose.Types.Array<mongoose.Types.ObjectId>;
 }
 
-export const USER_MODEL = "User";
+export const USER_MODEL = 'User';

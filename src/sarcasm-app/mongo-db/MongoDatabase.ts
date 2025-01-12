@@ -1,4 +1,4 @@
-import mongoose, { Mongoose } from "mongoose";
+import mongoose, { Mongoose } from 'mongoose';
 
 class MongoDatabase {
     public conn: Mongoose | undefined;
@@ -20,7 +20,7 @@ class MongoDatabase {
     public async connect(): Promise<Mongoose> {
         try {
             this.conn = await mongoose.connect(this.uri, {
-                serverSelectionTimeoutMS: 5000
+                serverSelectionTimeoutMS: 5000,
             });
 
             return this.conn;

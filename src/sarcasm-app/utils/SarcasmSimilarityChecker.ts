@@ -1,4 +1,4 @@
-import natural from "natural";
+import natural from 'natural';
 
 type SimilarityMethod = 'jaro-winkler-distance' | 'native';
 
@@ -7,7 +7,11 @@ export default class SarcasmSimilarityChecker {
     public thresholdNative: number;
     private similarityMethod: SimilarityMethod;
 
-    constructor({ similarityMethod = 'native', thresholdJaroWinklerDistance = 0.85, thresholdNative = 0.60 }: {
+    constructor({
+        similarityMethod = 'native',
+        thresholdJaroWinklerDistance = 0.85,
+        thresholdNative = 0.6,
+    }: {
         similarityMethod?: SimilarityMethod;
         thresholdJaroWinklerDistance?: number;
         thresholdNative?: number;
@@ -17,32 +21,55 @@ export default class SarcasmSimilarityChecker {
         this.similarityMethod = similarityMethod;
     }
 
-    private logSimilarity = (newSarcasm: string, existingSarcasm: string, similarityScore: number, result: boolean) => {
+    private logSimilarity = (
+        newSarcasm: string,
+        existingSarcasm: string,
+        similarityScore: number,
+        result: boolean,
+    ) => {
         console.log(':::SarcasmSimilarityChecker:::isSimilar:::');
-        console.log(JSON.stringify({
-            newSarcasm,
-            existingSarcasm,
-            similarityScore,
-            result,
-            method: this.similarityMethod
-        }, null, 2));
-    }
+        console.log(
+            JSON.stringify(
+                {
+                    newSarcasm,
+                    existingSarcasm,
+                    similarityScore,
+                    result,
+                    method: this.similarityMethod,
+                },
+                null,
+                2,
+            ),
+        );
+    };
 
     public normalizeString(str: string): string {
         return str.toLowerCase().replace(/[^a-z0-9]/g, '');
-    };
-
-    public checkSimilarityUsingJaroWinklerDistance = (sarcasmA: string, sarcasmB: string): number => {
-        const jaroWinklerDistance = natural.JaroWinklerDistance(this.normalizeString(sarcasmA), this.normalizeString(sarcasmB));
-
-        return Number(jaroWinklerDistance.toFixed(2));
     }
 
-    public checkSimilarityScoreNative = (newSarcasm: string, existingSarcasm: string): number => {
+    public checkSimilarityUsingJaroWinklerDistance = (
+        sarcasmA: string,
+        sarcasmB: string,
+    ): number => {
+        const jaroWinklerDistance = natural.JaroWinklerDistance(
+            this.normalizeString(sarcasmA),
+            this.normalizeString(sarcasmB),
+        );
+
+        return Number(jaroWinklerDistance.toFixed(2));
+    };
+
+    public checkSimilarityScoreNative = (
+        newSarcasm: string,
+        existingSarcasm: string,
+    ): number => {
         const normalizedNewSarcasm = this.normalizeString(newSarcasm);
         const normalizedExistingSarcasm = this.normalizeString(existingSarcasm);
 
-        const minLength = Math.min(normalizedNewSarcasm.length, normalizedExistingSarcasm.length);
+        const minLength = Math.min(
+            normalizedNewSarcasm.length,
+            normalizedExistingSarcasm.length,
+        );
 
         let matchedCharacterAtSameIndex = 0;
         for (let i = 0; i < minLength; i++) {
@@ -54,31 +81,57 @@ export default class SarcasmSimilarityChecker {
         return Number((matchedCharacterAtSameIndex / minLength).toFixed(2));
     };
 
-    public isSimilar = ({ newSarcasm, existingSarcasm }: { newSarcasm: string, existingSarcasm: string }): boolean => {
+    public isSimilar = ({
+        newSarcasm,
+        existingSarcasm,
+    }: {
+        newSarcasm: string;
+        existingSarcasm: string;
+    }): boolean => {
         if (this.similarityMethod === 'jaro-winkler-distance') {
-            const similarityScore = this.checkSimilarityUsingJaroWinklerDistance(newSarcasm, existingSarcasm);
+            const similarityScore =
+                this.checkSimilarityUsingJaroWinklerDistance(
+                    newSarcasm,
+                    existingSarcasm,
+                );
             const result = similarityScore >= this.thresholdJaroWinklerDistance;
 
-            this.logSimilarity(newSarcasm, existingSarcasm, similarityScore, result);
+            this.logSimilarity(
+                newSarcasm,
+                existingSarcasm,
+                similarityScore,
+                result,
+            );
 
             return result;
         }
 
-        const similarityScore = this.checkSimilarityScoreNative(newSarcasm, existingSarcasm);
+        const similarityScore = this.checkSimilarityScoreNative(
+            newSarcasm,
+            existingSarcasm,
+        );
         const result = similarityScore >= this.thresholdNative;
 
-        this.logSimilarity(newSarcasm, existingSarcasm, similarityScore, result);
+        this.logSimilarity(
+            newSarcasm,
+            existingSarcasm,
+            similarityScore,
+            result,
+        );
 
         return result;
-    }
+    };
 
-    public checkSimilarSarcasms = (newSarcasm: string, existingSarcasms: string[]): {
+    public checkSimilarSarcasms = (
+        newSarcasm: string,
+        existingSarcasms: string[],
+    ): {
         hasSimilarSarcasms: boolean;
         similarSarcasms: string[];
     } => {
         const similarSarcasms: string[] = [];
 
-        existingSarcasms.forEach((existingSarcasm) => {
+        existingSarcasms.forEach(existingSarcasm => {
             if (this.isSimilar({ newSarcasm, existingSarcasm })) {
                 similarSarcasms.push(existingSarcasm);
             }
@@ -86,7 +139,7 @@ export default class SarcasmSimilarityChecker {
 
         return {
             hasSimilarSarcasms: similarSarcasms.length > 0,
-            similarSarcasms
-        }
+            similarSarcasms,
+        };
     };
 }

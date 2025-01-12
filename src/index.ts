@@ -1,4 +1,4 @@
-import app from "./sarcasm-app/app/app.js";
+import app from './sarcasm-app/app/app.js';
 
 const PORT = process.env.PORT || 3000;
 

@@ -1,22 +1,22 @@
-import jwt from "jsonwebtoken";
-import { jwtExpiry, TokenPayload } from "./auth.controller.types.js";
-import { STATUS_CODES, StatusCodes } from "../../utils/utils.types.js";
+import jwt from 'jsonwebtoken';
+import { jwtExpiry, TokenPayload } from './auth.controller.types.js';
+import { STATUS_CODES, StatusCodes } from '../../utils/utils.types.js';
 
 class JWT {
     constructor(
         private readonly jwtSecret: string,
-        private readonly jwtExpiry: jwtExpiry = "7d"
-    ) { }
+        private readonly jwtExpiry: jwtExpiry = '7d',
+    ) {}
 
     public createUserToken(userId: string): string {
         return jwt.sign({ userId }, this.jwtSecret, {
-            expiresIn: this.jwtExpiry
+            expiresIn: this.jwtExpiry,
         });
     }
 
     public createResetPasswordToken(payload: TokenPayload): string {
         return jwt.sign(payload, this.jwtSecret, {
-            expiresIn: this.jwtExpiry
+            expiresIn: this.jwtExpiry,
         });
     }
 
@@ -41,13 +41,19 @@ class JWT {
 
     private validatePayload(decoded: unknown): void {
         if (!decoded || typeof decoded === 'string') {
-            throw new TokenError('Invalid token payload', STATUS_CODES.BAD_REQUEST);
+            throw new TokenError(
+                'Invalid token payload',
+                STATUS_CODES.BAD_REQUEST,
+            );
         }
 
         const payload = decoded as TokenPayload;
 
         if (!payload.userId) {
-            throw new TokenError('Token payload missing user id', STATUS_CODES.BAD_REQUEST);
+            throw new TokenError(
+                'Token payload missing user id',
+                STATUS_CODES.BAD_REQUEST,
+            );
         }
     }
 
@@ -62,7 +68,7 @@ class JWT {
 
         return new TokenError(
             'Token verification failed',
-            STATUS_CODES.INTERNAL_SERVER_ERROR
+            STATUS_CODES.INTERNAL_SERVER_ERROR,
         );
     }
 }
@@ -71,7 +77,7 @@ class TokenError extends Error {
     constructor(
         message: string,
         public statusCode: StatusCodes,
-        public isOperational: boolean = true
+        public isOperational: boolean = true,
     ) {
         super(message);
         this.name = 'TokenError';
@@ -79,6 +85,6 @@ class TokenError extends Error {
     }
 }
 
-export default JWT
+export default JWT;
 
-export { TokenError }
+export { TokenError };

@@ -1,47 +1,47 @@
 {
-	"env": {
-		"es2021": true,
-		"node": true
-	},
-	"extends": [
-		"eslint:recommended",
-		"plugin:node/recommended",
-		"plugin:express/recommended"
-	],
-	"parserOptions": {
-		"ecmaVersion": "latest",
-		"sourceType": "module"
-	},
-	"rules": {
-		"no-console": "off",
-		"no-unused-vars": "warn",
-		"no-undef": "error",
-		"no-constant-condition": "error",
-		"no-empty": "warn",
-		"no-extra-boolean-cast": "warn",
-		"no-extra-semi": "warn",
-		"no-regex-spaces": "warn",
-		"no-unreachable": "warn",
-		"no-unsafe-negation": "warn",
-		"valid-typeof": "warn",
-		"no-irregular-whitespace": "warn",
-		"no-unexpected-multiline": "warn",
-		"no-unsafe-finally": "warn",
-		"no-unsafe-optional-chaining": "warn",
-		"no-unsafe-regex": "warn",
-		"no-useless-backreference": "warn",
-		"no-async-promise-executor": "warn",
-		"no-misleading-character-class": "warn",
-		"no-import-assign": "warn",
-		"no-setter-return": "warn",
-		"no-dupe-else-if": "warn",
-		"no-import-meta": "warn",
-		"no-loss-of-precision": "warn",
-		"no-promise-executor-return": "warn",
-		"no-prototype-builtins": "warn",
-		"no-template-curly-in-string": "warn",
-		"no-unsafe-assign": "warn",
-		"no-unsafe-call": "warn",
-		"no-unsafe-return": "warn"
-	}
+    "env": {
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:node/recommended",
+        "plugin:express/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-console": "off",
+        "no-unused-vars": "warn",
+        "no-undef": "error",
+        "no-constant-condition": "error",
+        "no-empty": "warn",
+        "no-extra-boolean-cast": "warn",
+        "no-extra-semi": "warn",
+        "no-regex-spaces": "warn",
+        "no-unreachable": "warn",
+        "no-unsafe-negation": "warn",
+        "valid-typeof": "warn",
+        "no-irregular-whitespace": "warn",
+        "no-unexpected-multiline": "warn",
+        "no-unsafe-finally": "warn",
+        "no-unsafe-optional-chaining": "warn",
+        "no-unsafe-regex": "warn",
+        "no-useless-backreference": "warn",
+        "no-async-promise-executor": "warn",
+        "no-misleading-character-class": "warn",
+        "no-import-assign": "warn",
+        "no-setter-return": "warn",
+        "no-dupe-else-if": "warn",
+        "no-import-meta": "warn",
+        "no-loss-of-precision": "warn",
+        "no-promise-executor-return": "warn",
+        "no-prototype-builtins": "warn",
+        "no-template-curly-in-string": "warn",
+        "no-unsafe-assign": "warn",
+        "no-unsafe-call": "warn",
+        "no-unsafe-return": "warn"
+    }
 }
