@@ -9,7 +9,7 @@ export default class UserController {
     private sarcasmSimilarityChecker: SarcasmSimilarityChecker;
 
     constructor() {
-        this.sarcasmSimilarityChecker = new SarcasmSimilarityChecker();
+        this.sarcasmSimilarityChecker = new SarcasmSimilarityChecker({});
     }
 
     private validateRequest = (req: Request) => {
