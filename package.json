@@ -2,7 +2,7 @@
 	"name": "sarcasm-api",
 	"version": "2.0.0",
 	"description": "Collection of Chandler Bing's sarcastic comments.",
-	"main": "server.js",
+	"main": "dist/src/index.js",
 	"type": "module",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
@@ -10,6 +10,7 @@
 		"dev:tsc": "tsc --watch --preserveWatchOutput",
 		"dev:node": "env-cmd -f ./configs/dev.env node --enable-source-maps --watch dist/src/index.js",
 		"dev": "pnpm run \"/dev:/\"",
+		"dev:log": "pnpm run build && env-cmd -f ./configs/dev.env node dist/src/index.js",
 		"prod": "env-cmd -f ./configs/prod.env node dist/src/index.js",
 		"build": "tsc"
 	},

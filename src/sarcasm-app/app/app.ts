@@ -7,6 +7,7 @@ import authRouter from "../routes/auth/auth.router.js";
 import { APP_ROUTE, AppRoute } from "./app.constants.js";
 import sarcasmRouter from "../routes/sarcasm/sarcasm.router.js";
 import userRouter from "../routes/user/user.router.js";
+import { TokenError } from "../controller/auth/jwt.js";
 
 const app: Express = express();
 
@@ -40,6 +41,14 @@ app.use(async (err: Error, req: Request, res: Response, _next: NextFunction) => 
     if (err instanceof AppError) {
         res.status(err.statusCode).json({
             message: err.message
+        })
+
+        return;
+    }
+
+    if (err instanceof TokenError) {
+        res.status(err.statusCode).json({
+            message: "Unauthorized"
         })
 
         return;

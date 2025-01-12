@@ -1,32 +1,43 @@
 import { NextFunction, Request, Response } from "express";
-import { AUTH_CONTROLLER_ERRORS, UserAuthRequestBody, UserAuthSuccessResponse, userAuthSchema } from "./auth.controller.types.js";
+import { AUTH_CONTROLLER_ERRORS, JWT_EXPIRY, TokenPayload, UserAuthRequestBody, UserAuthSuccessResponse, UserGetResetPasswordLinkRequestBody, UserResetPasswordRequestBody, UserGetResetPasswordLinkSuccessResponse, userAuthSchema, userGetResetPasswordLinkSchema, userResetPasswordSchema, UserResetPasswordSuccessResponse, UserGetResetPasswordPageParams, userGetResetPasswordPageParamsSchema } from "./auth.controller.types.js";
 import { AppError } from "../../utils/AppError.js";
 import User from "../../models/user/user.model.js";
 import { IUser } from "../../models/user/user.model.types.js";
 import JWT from "./jwt.js";
 import { STATUS_CODES } from "../../utils/utils.types.js";
 import mongoose from "mongoose";
+import Joi from "joi";
 
 export default class AuthController {
-    private validateRequest = (req: Request): UserAuthRequestBody => {
-        const { error, value } = userAuthSchema.validate(req.body);
+    private validateRequestBody = <ReturnType>(req: Request, schema: Joi.ObjectSchema): ReturnType => {
+        const { error, value } = schema.validate(req.body);
 
         if (error) {
             throw new AppError(error.message, STATUS_CODES.BAD_REQUEST);
         }
 
-        return value as UserAuthRequestBody;
+        return value as ReturnType;
     }
 
-    private getJWTSecret = (req?: Request): string => {
+    private validateRequestParams = <ReturnType>(req: Request, schema: Joi.ObjectSchema): ReturnType => {
+        const { error, value } = schema.validate(req.params);
+
+        if (error) {
+            throw new AppError(error.message, STATUS_CODES.BAD_REQUEST);
+        }
+
+        return value as ReturnType;
+    }
+
+    private getJWTSecret = (): string => {
         return process.env.JWT_SECRET as string;
     }
 
     private createAuthToken = (jwt: JWT, userId: string): string => {
-        return jwt.create(userId);
+        return jwt.createUserToken(userId);
     }
 
-    private createSuccessResponse = (authToken: string): UserAuthSuccessResponse => {
+    private createAuthSuccessResponse = (authToken: string): UserAuthSuccessResponse => {
         return { authToken };
     }
 
@@ -38,11 +49,13 @@ export default class AuthController {
         return await User.findOne({ email });
     }
 
+    private getResetPasswordJWTSecret = (user: IUser) => {
+        return this.getJWTSecret() + user.password
+    }
+
     public registerUser = async (req: Request, res: Response) => {
-        const { email, password } = this.validateRequest(req);
-
+        const { email, password } = this.validateRequestBody<UserAuthRequestBody>(req, userAuthSchema);
         const existingUser = await this.findUserByEmail(email);
-
         if (existingUser) {
             throw new AppError(AUTH_CONTROLLER_ERRORS.EXISTING_USER, STATUS_CODES.BAD_REQUEST);
         }
@@ -50,30 +63,77 @@ export default class AuthController {
         const newUser = new User({ email, password });
         await newUser.save();
 
-        const jwt = new JWT(this.getJWTSecret(req));
+        const jwt = new JWT(this.getJWTSecret());
         const authToken = this.createAuthToken(jwt, newUser.id);
 
-        res.status(STATUS_CODES.CREATED).json(this.createSuccessResponse(authToken));
+        res.status(STATUS_CODES.CREATED).json(this.createAuthSuccessResponse(authToken));
     }
 
     public loginUser = async (req: Request, res: Response) => {
-        const { email, password } = this.validateRequest(req);
-
+        const { email, password } = this.validateRequestBody<UserAuthRequestBody>(req, userAuthSchema);
         const existingUser = await this.findUserByEmail(email);
-
         if (!existingUser) {
             throw new AppError(AUTH_CONTROLLER_ERRORS.NON_EXISTING_USER, STATUS_CODES.BAD_REQUEST);
         }
 
         const isCorrectPassword = existingUser.checkPassword(password);
-
         if (!isCorrectPassword) {
             throw new AppError(AUTH_CONTROLLER_ERRORS.INCORRECT_CREDENTIALS, STATUS_CODES.BAD_REQUEST);
         }
 
-        const jwt = new JWT(this.getJWTSecret(req));
+        const jwt = new JWT(this.getJWTSecret());
         const authToken = this.createAuthToken(jwt, existingUser.id);
 
-        res.status(STATUS_CODES.CREATED).json(this.createSuccessResponse(authToken));
+        res.status(STATUS_CODES.CREATED).json(this.createAuthSuccessResponse(authToken));
+    }
+
+    private createGetResetPasswordDataSuccessResponse = (userId: string, token: string): UserGetResetPasswordLinkSuccessResponse => {
+        return { userId, token };
+    }
+
+    public getResetPasswordData = async (req: Request, res: Response) => {
+        const { email } = this.validateRequestBody<UserGetResetPasswordLinkRequestBody>(req, userGetResetPasswordLinkSchema);
+
+        const user = await this.findUserByEmail(email);
+        if (!user) {
+            throw new AppError(AUTH_CONTROLLER_ERRORS.NON_EXISTING_USER, STATUS_CODES.BAD_REQUEST);
+        }
+
+        const jwt = new JWT(this.getResetPasswordJWTSecret(user), '15m');
+        const payload: TokenPayload = {
+            email: user.email,
+            userId: user.id,
+        };
+        const token = jwt.createResetPasswordToken(payload);
+
+        res.status(STATUS_CODES.OK).json(this.createGetResetPasswordDataSuccessResponse(user.id, token));
+    }
+
+    private createResetPasswordSuccessResponse = (): UserResetPasswordSuccessResponse => {
+        return { message: "Password reset successfully" };
+    }
+
+    private verifyResetPasswordToken = async (user: IUser | null, token: string) => {
+        if (!user) {
+            throw new AppError(AUTH_CONTROLLER_ERRORS.NON_EXISTING_USER, STATUS_CODES.BAD_REQUEST);
+        }
+
+        const secret = this.getResetPasswordJWTSecret(user);
+        const jwt = new JWT(secret);
+        await jwt.verify(token);
+
+        return user;
+    }
+
+    public resetPassword = async (req: Request, res: Response) => {
+        const { email, password, token } = this.validateRequestBody<UserResetPasswordRequestBody>(req, userResetPasswordSchema);
+        const user = await this.findUserByEmail(email);
+
+        const verifiedUser = await this.verifyResetPasswordToken(user, token);
+
+        verifiedUser.password = password;
+        await verifiedUser.save();
+
+        res.status(STATUS_CODES.OK).json(this.createResetPasswordSuccessResponse());
     }
 }

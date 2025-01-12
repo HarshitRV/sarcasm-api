@@ -16,7 +16,8 @@ export const STATUS_CODES = {
     NOT_FOUND: 404,
     INTERNAL_SERVER_ERROR: 500,
     UNAUTHORIZED: 401,
-    CREATED: 201
+    CREATED: 201,
+    OK: 200,
 } as const;
 
 export type StatusCodes = ObjectValues<typeof STATUS_CODES>;

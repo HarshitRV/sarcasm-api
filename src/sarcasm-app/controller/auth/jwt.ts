@@ -8,8 +8,14 @@ class JWT {
         private readonly jwtExpiry: jwtExpiry = "7d"
     ) { }
 
-    public create(userId: string): string {
+    public createUserToken(userId: string): string {
         return jwt.sign({ userId }, this.jwtSecret, {
+            expiresIn: this.jwtExpiry
+        });
+    }
+
+    public createResetPasswordToken(payload: TokenPayload): string {
+        return jwt.sign(payload, this.jwtSecret, {
             expiresIn: this.jwtExpiry
         });
     }
