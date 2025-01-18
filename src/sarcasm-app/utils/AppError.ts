@@ -23,11 +23,13 @@ export function wrapAsyncHandler(
 export class AppError extends Error {
     public statusCode: StatusCodes;
     public message: string;
+    public code: string;
 
-    constructor(message: string, statusCode: StatusCodes) {
+    constructor(message: string, statusCode: StatusCodes, code: string) {
         super(message);
         this.statusCode = statusCode;
         this.message = message;
+        this.code = code;
         Error.captureStackTrace(this, this.constructor);
     }
 
@@ -35,7 +37,11 @@ export class AppError extends Error {
         return this.message;
     }
 
-    public get errorCode(): StatusCodes {
+    public get errorStatusCode(): StatusCodes {
         return this.statusCode;
+    }
+
+    public get errorCode(): string {
+        return this.code;
     }
 }

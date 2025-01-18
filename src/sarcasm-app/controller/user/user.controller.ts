@@ -9,19 +9,26 @@ import { AppError } from '../../utils/AppError.js';
 import { STATUS_CODES } from '../../utils/utils.types.js';
 import Sarcasm from '../../models/sarcasm/sarcasm.model.js';
 import SarcasmSimilarityChecker from '../../utils/SarcasmSimilarityChecker.js';
+import { ERROR_CODES } from '../../../common/common.types.js';
 
 export default class UserController {
     private sarcasmSimilarityChecker: SarcasmSimilarityChecker;
 
     constructor() {
-        this.sarcasmSimilarityChecker = new SarcasmSimilarityChecker({});
+        this.sarcasmSimilarityChecker = new SarcasmSimilarityChecker({
+            similarityMethod: 'cosine',
+        });
     }
 
     private validateRequest = (req: Request) => {
         const { error, value } = addSarcasmSchema.validate(req.body);
 
         if (error) {
-            throw new AppError(error.message, STATUS_CODES.BAD_REQUEST);
+            throw new AppError(
+                error.message,
+                STATUS_CODES.BAD_REQUEST,
+                ERROR_CODES.BAD_REQUEST,
+            );
         }
 
         return value as AddSarcasmRequestBody;
@@ -43,6 +50,7 @@ export default class UserController {
         return {
             hasSimilarSarcasms: true,
             similarSarcasms,
+            code: ERROR_CODES.DUPLICATE_SARCASM,
         };
     };
 

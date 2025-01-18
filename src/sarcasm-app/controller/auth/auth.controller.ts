@@ -19,6 +19,7 @@ import JWT from './jwt.js';
 import { STATUS_CODES } from '../../utils/utils.types.js';
 import mongoose from 'mongoose';
 import Joi from 'joi';
+import { ERROR_CODES } from '../../../common/common.types.js';
 
 export default class AuthController {
     private validateRequestBody = <ReturnType>(
@@ -28,7 +29,11 @@ export default class AuthController {
         const { error, value } = schema.validate(req.body);
 
         if (error) {
-            throw new AppError(error.message, STATUS_CODES.BAD_REQUEST);
+            throw new AppError(
+                error.message,
+                STATUS_CODES.BAD_REQUEST,
+                ERROR_CODES.BAD_REQUEST,
+            );
         }
 
         return value as ReturnType;
@@ -75,6 +80,7 @@ export default class AuthController {
             throw new AppError(
                 AUTH_CONTROLLER_ERRORS.EXISTING_USER,
                 STATUS_CODES.BAD_REQUEST,
+                ERROR_CODES.DUPLICATE_USER,
             );
         }
 
@@ -97,6 +103,7 @@ export default class AuthController {
             throw new AppError(
                 AUTH_CONTROLLER_ERRORS.NON_EXISTING_USER,
                 STATUS_CODES.BAD_REQUEST,
+                ERROR_CODES.USER_NOT_FOUND,
             );
         }
 
@@ -105,6 +112,7 @@ export default class AuthController {
             throw new AppError(
                 AUTH_CONTROLLER_ERRORS.INCORRECT_CREDENTIALS,
                 STATUS_CODES.BAD_REQUEST,
+                ERROR_CODES.INCORRECT_CREDENTIALS,
             );
         }
 
@@ -135,6 +143,7 @@ export default class AuthController {
             throw new AppError(
                 AUTH_CONTROLLER_ERRORS.NON_EXISTING_USER,
                 STATUS_CODES.BAD_REQUEST,
+                ERROR_CODES.USER_NOT_FOUND,
             );
         }
 
@@ -163,6 +172,7 @@ export default class AuthController {
             throw new AppError(
                 AUTH_CONTROLLER_ERRORS.NON_EXISTING_USER,
                 STATUS_CODES.BAD_REQUEST,
+                ERROR_CODES.USER_NOT_FOUND,
             );
         }
 

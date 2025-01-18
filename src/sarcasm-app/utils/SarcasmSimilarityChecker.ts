@@ -1,24 +1,28 @@
 import natural from 'natural';
 
-type SimilarityMethod = 'jaro-winkler-distance' | 'native';
+type SimilarityMethod = 'jaro-winkler-distance' | 'native' | 'cosine';
 
 export default class SarcasmSimilarityChecker {
     public thresholdJaroWinklerDistance: number;
     public thresholdNative: number;
+    public thresholdCosine: number;
     private similarityMethod: SimilarityMethod;
 
     constructor({
         similarityMethod = 'native',
         thresholdJaroWinklerDistance = 0.85,
         thresholdNative = 0.6,
+        thresholdCosine = 0.8,
     }: {
         similarityMethod?: SimilarityMethod;
         thresholdJaroWinklerDistance?: number;
         thresholdNative?: number;
+        thresholdCosine?: number;
     }) {
         this.thresholdJaroWinklerDistance = thresholdJaroWinklerDistance;
         this.thresholdNative = thresholdNative;
         this.similarityMethod = similarityMethod;
+        this.thresholdCosine = thresholdCosine;
     }
 
     private logSimilarity = (
@@ -57,6 +61,17 @@ export default class SarcasmSimilarityChecker {
         );
 
         return Number(jaroWinklerDistance.toFixed(2));
+    };
+
+    public checkSimilarityScoreCosine = (
+        newSarcasm: string,
+        existingSarcasm: string,
+    ): number => {
+        const cosineSimilarity = new CosineSimilarity();
+        return cosineSimilarity.calculateSimilarity(
+            newSarcasm,
+            existingSarcasm,
+        );
     };
 
     public checkSimilarityScoreNative = (
@@ -106,6 +121,23 @@ export default class SarcasmSimilarityChecker {
             return result;
         }
 
+        if (this.similarityMethod === 'cosine') {
+            const similarityScore = this.checkSimilarityScoreCosine(
+                newSarcasm,
+                existingSarcasm,
+            );
+            const result = similarityScore >= this.thresholdCosine;
+
+            this.logSimilarity(
+                newSarcasm,
+                existingSarcasm,
+                similarityScore,
+                result,
+            );
+
+            return result;
+        }
+
         const similarityScore = this.checkSimilarityScoreNative(
             newSarcasm,
             existingSarcasm,
@@ -142,4 +174,76 @@ export default class SarcasmSimilarityChecker {
             similarSarcasms,
         };
     };
+}
+
+export class CosineSimilarity {
+    tokenize(text: string): string[] {
+        return text.split(/[^A-Za-z0-9]+/);
+    }
+
+    /** Convert strings into arrays (Tokenize to lower case) */
+    getTokens(str: string): string[] {
+        return this.tokenize(str)
+            .filter(function (val) {
+                if (!isNaN(+val)) return false;
+                else return true;
+            })
+            .map(word => {
+                return word.toLowerCase();
+            });
+    }
+
+    /** Finds common word frequency */
+    computeFrequency(arr: string[], commons: string[]): number[] {
+        return commons.map(word => {
+            return arr.reduce((f, element) => {
+                if (element == word) return (f += 1);
+                else return (f += 0);
+            }, 0);
+        });
+    }
+
+    /** Compute vector A.B */
+    computeVectorAB(v1: number[], v2: number[]): number {
+        return v1.reduce((sum, f, index) => {
+            return (sum += f * (v2[index] ?? 0));
+        }, 0);
+    }
+
+    /** Calculates ||a|| and ||b|| */
+    absVector(v: number[]): number {
+        return Math.sqrt(
+            v.reduce((sum, f) => {
+                return (sum += f * f);
+            }, 0),
+        );
+    }
+
+    /** Cosine Similarity */
+    similarity(vAB: number, a: number, b: number): number {
+        return vAB / (a * b);
+    }
+
+    calculateSimilarity(stringA: string, stringB: string): number {
+        const arr1 = this.getTokens(stringA);
+        const arr2 = this.getTokens(stringB);
+
+        // Define Commons Array //
+        const commons = arr1;
+
+        // Word Frequency as Vectors //
+        const v1 = this.computeFrequency(arr1, commons);
+        const v2 = this.computeFrequency(arr2, commons);
+
+        // Calculate Vector A.B //
+        const vAB = this.computeVectorAB(v1, v2);
+
+        // Abs Vector A and B //
+        const a = this.absVector(v1);
+        const b = this.absVector(v2);
+
+        // Cosine Similarity //
+        const similarity = this.similarity(vAB, a, b);
+        return Number(similarity.toFixed(2));
+    }
 }

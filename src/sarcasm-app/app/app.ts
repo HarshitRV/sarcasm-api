@@ -8,7 +8,7 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import { ERROR_TYPES } from '../../common/common.types.js';
+import { ERROR_CODES, ERROR_TYPES } from '../../common/common.types.js';
 import { AppError } from '../utils/AppError.js';
 import authRouter from '../routes/auth/auth.router.js';
 import { APP_ROUTE, AppRoute } from './app.constants.js';
@@ -49,6 +49,7 @@ app.use(
         if (err instanceof AppError) {
             res.status(err.statusCode).json({
                 message: err.message,
+                code: err.code,
             });
 
             return;
@@ -56,7 +57,8 @@ app.use(
 
         if (err instanceof TokenError) {
             res.status(err.statusCode).json({
-                message: 'Unauthorized',
+                message: ERROR_TYPES[401],
+                code: ERROR_CODES.AUTH_TOKEN_EXPIRED,
             });
 
             return;
@@ -65,6 +67,7 @@ app.use(
         if (err.message === ERROR_TYPES[404]) {
             res.status(404).json({
                 message: ERROR_TYPES[404],
+                code: ERROR_CODES.NOT_FOUND,
             });
 
             return;
@@ -72,6 +75,7 @@ app.use(
 
         res.status(500).json({
             message: 'Oops! Something went wrong!',
+            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
         });
     },
 );
