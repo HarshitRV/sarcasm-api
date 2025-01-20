@@ -3,6 +3,7 @@ import { ERROR_CODES } from '../../../common/common.types.js';
 
 export interface AddSarcasmRequestBody {
     sarcasm: string;
+    override?: boolean;
 }
 
 export interface AddSarcasmSuccessResponse {
@@ -17,4 +18,5 @@ export interface AddSarcasmErrorResponse {
 
 export const addSarcasmSchema = Joi.object({
     sarcasm: Joi.string().required(),
+    override: Joi.boolean().optional(),
 });

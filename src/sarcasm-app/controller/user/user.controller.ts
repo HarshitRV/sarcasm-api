@@ -54,13 +54,7 @@ export default class UserController {
         };
     };
 
-    addSarcasticComment = async (req: Request, res: Response) => {
-        const { sarcasm } = this.validateRequest(req);
-
-        const newSarcasm = new Sarcasm({
-            sarcasm,
-        });
-
+    private checkSimilarSarcasms = async (sarcasm: string) => {
         const allSarcasms = await Sarcasm.find({});
         const sarcasms: string[] = allSarcasms.map(
             sarcasm => sarcasm.sarcasm as unknown as string,
@@ -72,16 +66,33 @@ export default class UserController {
                 sarcasms,
             );
 
-        if (hasSimilarSarcasms) {
-            res.status(STATUS_CODES.BAD_REQUEST).json(
-                this.addSarcasticCommentResponse({
-                    success: false,
-                    requestBody: req.body,
-                    similarSarcasms,
-                }),
-            );
+        return { hasSimilarSarcasms, similarSarcasms };
+    };
 
-            return;
+    addSarcasticComment = async (req: Request, res: Response) => {
+        const { sarcasm, override } = this.validateRequest(req);
+
+        console.log(':::override:::similarityCheck:::', override);
+
+        const newSarcasm = new Sarcasm({
+            sarcasm,
+        });
+
+        if (!override) {
+            const { hasSimilarSarcasms, similarSarcasms } =
+                await this.checkSimilarSarcasms(sarcasm);
+
+            if (hasSimilarSarcasms) {
+                res.status(STATUS_CODES.BAD_REQUEST).json(
+                    this.addSarcasticCommentResponse({
+                        success: false,
+                        requestBody: req.body,
+                        similarSarcasms,
+                    }),
+                );
+
+                return;
+            }
         }
 
         await newSarcasm.save();
@@ -90,7 +101,7 @@ export default class UserController {
             this.addSarcasticCommentResponse({
                 success: true,
                 requestBody: req.body,
-                similarSarcasms,
+                similarSarcasms: [],
             }),
         );
     };
