@@ -1,4 +1,5 @@
 import { ObjectValues } from '../sarcasm-app/utils/type.utils.js';
+import { z } from 'zod';
 
 export const ERROR_TYPES = {
     404: 'Not Found',
@@ -19,5 +20,13 @@ export const ERROR_CODES = {
     MISSING_REQUIRED_ROLE: 'missing.required.role',
 } as const;
 
-export type ErrorTypes = ObjectValues<typeof ERROR_TYPES>;
 export type ErrorCodes = ObjectValues<typeof ERROR_CODES>;
+
+export const envSchema = z.object({
+    MONGODB_CONNECTION_STRING: z.string(),
+    JWT_SECRET: z.string(),
+    PORT: z.string().optional(),
+    PASS_CODE: z.string()
+})
+
+export type EnvSchema = z.infer<typeof envSchema>;

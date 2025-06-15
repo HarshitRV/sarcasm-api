@@ -20,6 +20,7 @@ import { STATUS_CODES } from '../../utils/utils.types.js';
 import mongoose from 'mongoose';
 import Joi from 'joi';
 import { ERROR_CODES } from '../../../common/common.types.js';
+import { appConfig } from '../../../config/app-config.js';
 
 export default class AuthController {
     private validateRequestBody = <ReturnType>(
@@ -40,7 +41,7 @@ export default class AuthController {
     };
 
     private getJWTSecret = (): string => {
-        return process.env.JWT_SECRET as string;
+        return appConfig.env.JWT_SECRET;
     };
 
     private createAuthToken = (jwt: JWT, userId: string): string => {
